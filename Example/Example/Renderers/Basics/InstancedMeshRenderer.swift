@@ -77,6 +77,11 @@ final class InstancedMeshRenderer: BaseRenderer {
                     object.orientation = .init(angle: 2.0 * time + simd_length(object.position), axis: axis)
 
                     instancedMesh.setMatrixAt(index: index, matrix: object.localMatrix)
+                    let tx = Float(x + halfDim) / Float(dim - 1)
+                    let ty = Float(y + halfDim) / Float(dim - 1)
+                    let tz = Float(z + halfDim) / Float(dim - 1)
+                    instancedMesh.setColorAt(index: index, color: simd_make_float4(tx, ty, tz, 1.0))
+                    
                     index += 1
                 }
             }

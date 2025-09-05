@@ -103,6 +103,12 @@ public class InstancedMesh: Mesh {
         _updateInstanceMatrixBuffer = true
     }
 
+    public func setColorAt(index: Int, color: simd_float4) {
+        guard index < instanceCount else { return }
+        instanceMatricesUniforms[index].color = color
+        _updateInstanceMatrixBuffer = true
+    }
+
     // MARK: - Instancing
 
     public func getMatrixAt(index: Int) -> matrix_float4x4 {

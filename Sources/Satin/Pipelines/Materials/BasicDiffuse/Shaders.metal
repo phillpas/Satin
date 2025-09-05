@@ -5,6 +5,7 @@ typedef struct {
     // inject shadow coords
     float3 viewPosition;
     float3 normal;
+    float4 color;
 } BasicDiffuseVertexData;
 
 typedef struct {
@@ -26,9 +27,11 @@ vertex BasicDiffuseVertexData basicDiffuseVertex(
 
     const float4 viewPosition = vertexUniforms[amp_id].viewMatrix * modelMatrix * position;
     const float3 normal = normalMatrix * in.normal;
+    const float4 color = instanceUniforms[instanceID].color;
 #else
     const float4 viewPosition = vertexUniforms[amp_id].modelViewMatrix * position;
     const float3 normal = vertexUniforms[amp_id].normalMatrix * in.normal;
+    const float4 color = float4(1.0);
 #endif
 
     const float4 screenSpaceNormal = vertexUniforms[amp_id].viewMatrix * float4(normal, 0.0);
@@ -37,6 +40,7 @@ vertex BasicDiffuseVertexData basicDiffuseVertex(
     out.viewPosition = viewPosition.xyz;
     out.position = vertexUniforms[amp_id].projectionMatrix * viewPosition;
     out.normal = screenSpaceNormal.xyz;
+    out.color = color;
 
     // inject shadow vertex calc
 
@@ -47,7 +51,7 @@ fragment float4 basicDiffuseFragment(
     BasicDiffuseVertexData in [[stage_in]],
     // inject shadow fragment args
     constant BasicDiffuseUniforms &uniforms [[buffer(FragmentBufferMaterialUniforms)]]) {
-    float4 outColor = uniforms.color;
+    float4 outColor = uniforms.color * in.color;
 
     const float3 pos = in.viewPosition;
     const float3 dx = normalize(dfdx(pos));
